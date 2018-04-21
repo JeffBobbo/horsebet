@@ -1,0 +1,186 @@
+body
+{
+  margin:0px;
+
+  color:white;
+}
+
+/*
+ * side bar stuff
+ */
+div#sidebar
+{
+  position:fixed;
+  left:0px;
+  top:0px;
+  width:16rem;
+  height:100%;
+
+  background-color:#222;
+  overflow-y:auto;
+}
+
+div#sidebar>*
+{
+  margin:4px;
+}
+
+div.notice
+{
+  border:1px solid grey;
+  padding:2px;
+  position:relative;
+}
+div.notice>a
+{
+  float:right;
+  color:rgb(255, 152, 0);
+  position:absolute;
+  top:6px;
+  right:8px;
+  cursor:pointer;
+}
+
+.collapsable
+{
+  border:1px solid grey;
+  padding:2px;
+}
+
+.collapsable>p
+{
+  font-size:1.5rem;
+  cursor:pointer;
+  user-select:none;
+}
+
+div#skill-overview
+{
+  max-height:400px;
+  overflow-y:auto;
+}
+
+/*
+ * close side bar stuff
+ */
+div#close
+{
+  position:fixed;
+  height:100%;
+  width:1rem;
+  left:15rem;
+  top:0px;
+  color:black;
+}
+
+div#close>p
+{
+  position:relative;
+  margin-top:-8px;
+  margin-bottom:0px;
+  top:50%;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/*
+ * pane stuff, this is the main content, hosting the results etc
+ */
+div#pane
+{
+  position:fixed;
+  left:16rem;
+  height:100%;
+  width:calc(100% - 16rem);
+
+  display:flex;
+  flex-flow:column;
+
+  background-color:#333;
+}
+
+div#pane>*
+{
+  margin:4px;
+}
+
+div#set-wrapper
+{
+  overflow:auto;
+  flex:1;
+}
+
+/*
+ * sortable table stuff
+ */
+table.sortable th.sort>i
+{
+  cursor:pointer;
+  user-select:none;
+}
+table.sortable th.sort:not(.down):not(.up):after
+{
+
+}
+table.sortable tr:nth-child(even)
+{
+  background-color:#444;
+}
+
+td.numeric
+{
+  text-align:right;
+}
+
+/*
+ * general stuff
+ */
+.hide
+{
+  display:none;
+}
+
+table
+{
+  width:100%;
+}
+
+table img
+{
+  width:1em;
+}
+
+table select
+{
+  width:100%;
+}
+
+th
+{
+  font:initial;
+}
+
+.good
+{
+  color:#4caf50;
+}
+.bad
+{
+  color:#f44336;
+}
+
+hr
+{
+  margin:0px;
+}
+
+p
+{
+  margin:4px 0px;
+}
+
+fieldset
+{
+  margin:6px 0px 4px 0px;
+  padding:4px;
+}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- META -->
+    <title>HorseBet</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="style.css" media="all" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Javascript -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="tools.js"></script>
+    <script type="text/javascript" src="bet.js"></script>
+    <script type="text/javascript" src="betmanager.js"></script>
+    <script type="text/javascript" src="horse.js"></script>
+    <script type="text/javascript" src="horsemanager.js"></script>
+    <script type="text/javascript" src="race.js"></script>
+    <script type="text/javascript">
+let horsemanager;
+let betmanager;
+
+let race = null;
+
+let start = performance.now();
+let prev = performance.now();
+let donePayout = false;
+function idle(stamp)
+{
+  if (!start) start = stamp;
+  const delta = stamp - prev;
+  prev = stamp;
+
+  race.idle(delta);
+
+  // drawing
+  let canvas = $('canvas')[0];
+  let context = canvas.getContext('2d');
+
+  context.resetTransform();
+  context.fillStyle = 'darkgreen';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  const NUM_HORSES = race.horses().length;
+  const winner = race.winner();
+
+  // draw fancy lane backrgounds
+  if (winner !== null)
+  {
+    if (donePayout === false)
+      payouts(race.horses()[winner]);
+    context.fillStyle = 'gold';
+    context.fillRect(0, HORSE_SIZE * winner, canvas.width, HORSE_SIZE);
+  }
+
+  // draw lane lines
+  for (let i = 1; i <= NUM_HORSES; ++i)
+  {
+    context.beginPath();
+    context.moveTo(0, HORSE_SIZE * i);
+    context.lineTo(canvas.width, HORSE_SIZE * i);
+    context.stroke();
+  }
+
+  context.strokeStyle = 'red';
+  for (let i = 0.5; i < race.distance(); i += 0.5)
+  {
+    context.beginPath();
+    context.moveTo(Math.floor(i * PIXEL_PER_KM), 0);
+    context.lineTo(Math.floor(i * PIXEL_PER_KM), canvas.height);
+    context.stroke();   
+  }
+  // draw winning line
+  context.beginPath();
+  context.moveTo(Math.floor(race.distance() * PIXEL_PER_KM), 0);
+  context.lineTo(Math.floor(race.distance() * PIXEL_PER_KM), canvas.height);
+  context.stroke();
+
+  for (const horse of race.horses())
+  {
+    horse.draw(canvas, context);
+    context.translate(0, HORSE_SIZE);
+  }
+
+
+  requestAnimationFrame(idle);
+}
+
+function addBet(who, amount, on)
+{
+  betmanager.add(new Bet(who, amount, on));
+  oddsTable();
+}
+
+function oddsTable()
+{
+  $('table#odds > tbody').empty();
+
+  for (const horse of race.horses())
+  {
+    let row = "<tr>" +
+    "<td>" + horse.name + "</td>" +
+    "<td style='float:right;'>" + betmanager.odds(horse.name).toFixed(1) + "</td>" +
+    "</td>";
+    $("table#odds > tbody:last-child").append(row);
+  }
+}
+
+function houseBets()
+{
+  const BASE_BET = 50000;
+  const SPEED_FACTOR = 50000;
+
+  for (const horse of race.horses())
+  {
+    let amt = BASE_BET + SPEED_FACTOR * ((horse.maxSpeed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED));
+    betmanager.add(new Bet("House", 10, horse.name));
+  }
+}
+
+function payouts(winner)
+{
+  donePayout = true;
+  let payouts = betmanager.winners(winner.name);
+
+  for (const bet of payouts)
+  {
+    console.log(bet.owner + " gets " + betmanager.payout(bet));
+  }
+}
+
+$(document).ready(function() {
+  // register event listeners
+  $(window).on('resize', function() {
+    let canvas = $('canvas')[0];
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    PIXEL_PER_KM = (canvas.width - 100) / race.distance()
+  });
+
+  $('button#race').click(function() {
+    donePayout = false;
+    betmanager = new BetManager();
+    race = new Race(horsemanager.choose(rand_i(4, 6)));
+    for (const horse of race.horses())
+    {
+      // set it up for the race
+      horse.dist = 0;
+      horse.motivation = rand_f(0.9, 1.1);
+    }
+    houseBets();
+    oddsTable();
+    race.start();
+  });
+
+  for (let i = 0; i < colours.length; ++i)
+  {
+    const colour = colours[i];
+    colours[i] = new Image();
+    colours[i].src = 'img/horse-' + colour + '.png';
+  }
+
+  horsemanager = new HorseManager();
+  betmanager = new BetManager();
+  race = new Race(horsemanager.choose(rand_i(4, 6)));
+  houseBets();
+  oddsTable();
+
+  let canvas = $('canvas')[0];
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+  PIXEL_PER_KM = (canvas.width - 100) / race.distance()
+
+  // pass off to the idle loop
+  requestAnimationFrame(idle);
+});
+    </script>
+  </head>
+  <body>
+    <div id="sidebar" style="position:fixed; width:16rem; height:100%;">
+      <div class="collapsable">
+        <p onclick="$($(this).siblings('div')).toggleClass('hide');">Race</p>
+        <div>
+          <button id="race">Race</button>
+        </div>
+      </div>
+      <div class="collapsable">
+        <p onclick="$($(this).siblings('div')).toggleClass('hide');">Odds</p>
+        <div>
+          <table id="odds">
+            <thead>
+              <tr>
+                <th>Horse</th>
+                <th>Odds</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <canvas style="position:fixed; width:calc(100% - 16rem); height:100%; left:16rem;">
+    </canvas>
+  </body>
+</html>
