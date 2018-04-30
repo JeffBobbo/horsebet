@@ -58,6 +58,7 @@ function idle(stamp)
   }
 
   // draw lane lines
+  context.strokeStyle = 'red';
   for (let i = 1; i <= NUM_HORSES; ++i)
   {
     context.beginPath();
@@ -66,18 +67,18 @@ function idle(stamp)
     context.stroke();
   }
 
-  context.strokeStyle = 'red';
-  for (let i = 0.5; i < race.distance(); i += 0.5)
+  for (let i = 0.0; i < race.distance(); i += 0.5)
   {
     context.beginPath();
-    context.moveTo(Math.floor(i * PIXEL_PER_KM), 0);
-    context.lineTo(Math.floor(i * PIXEL_PER_KM), canvas.height);
-    context.stroke();   
+    context.moveTo(Math.floor(i * PIXEL_PER_KM) + 50, 0);
+    context.lineTo(Math.floor(i * PIXEL_PER_KM) + 50, canvas.height);
+    context.stroke();
   }
   // draw winning line
+  context.strokeStyle = 'gold';
   context.beginPath();
-  context.moveTo(Math.floor(race.distance() * PIXEL_PER_KM), 0);
-  context.lineTo(Math.floor(race.distance() * PIXEL_PER_KM), canvas.height);
+  context.moveTo(Math.floor(race.distance() * PIXEL_PER_KM) + 50, 0);
+  context.lineTo(Math.floor(race.distance() * PIXEL_PER_KM) + 50, canvas.height);
   context.stroke();
 
   for (const horse of race.horses())
