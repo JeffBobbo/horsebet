@@ -113,13 +113,12 @@ function oddsTable()
 
 function houseBets()
 {
-  const BASE_BET = 50000;
-  const SPEED_FACTOR = 50000;
+  const BASE_BET = 1e5;
 
   for (const horse of race.horses())
   {
-    let amt = BASE_BET + SPEED_FACTOR * ((horse.maxSpeed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED));
-    betmanager.add(new Bet("House", 10, horse.name));
+    let amt = horse.maxSpeed - MIN_SPEED;
+    betmanager.add(new Bet("House", (10 * amt) * BASE_BET + BASE_BET, horse.name));
   }
 }
 
@@ -134,7 +133,7 @@ function payouts(winner)
   {
     if (bet.owner === "House")
       continue;
-    $('table#winnings > tbody:last-child').append('<tr><td>' + bet.owner + '</td><td>' + betmanager.payout(bet) + '</td></tr>');
+    $('table#winnings > tbody:last-child').append('<tr><td>' + bet.owner + '</td><td>' + Math.floor(betmanager.payout(bet)) + '</td></tr>');
   }
 }
 
