@@ -4,7 +4,7 @@ class HorseManager
   {
     this.horses = [];
 
-    let names = ['Lightning', 'Rocinante', 'Seabiscuit', 'Traveller', 'Sir Barton', 'Red Rum', 'Ballabriggs', 'Roger', 'Glory', 'Speedy', 'Talluah', 'Crusade\'s Promise', 'Captain', 'Black Gardenia', 'Ducky Fuzz', 'Little Pink', 'Ziggy', 'Bebee', 'Harley', 'Maximus', 'Digby'];
+    let names = ['Lightning', 'Rocinante', 'Seabiscuit', 'Traveller', 'Sir Barton', 'Red Rum', 'Ballabriggs', 'Roger', 'Glory', 'Speedy', 'Tallulah', 'Crusade\'s Promise', 'Captain', 'Black Gardenia', 'Ducky Fuzz', 'Little Pink', 'Ziggy', 'Bebee', 'Harley', 'Maximus', 'Digby'];
     let numbers = [];
     for (let i = 1; i<= 30; ++i)
       numbers.push(i);
