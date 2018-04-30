@@ -115,10 +115,13 @@ function houseBets()
 {
   const BASE_BET = 1e5;
 
+  $('select#on').empty();
   for (const horse of race.horses())
   {
     let amt = horse.maxSpeed - MIN_SPEED;
     betmanager.add(new Bet("House", (10 * amt) * BASE_BET + BASE_BET, horse.name));
+
+    $('select#on').append('<option value="' + horse.name + '">' + horse.name + '</option>');
   }
 }
 
@@ -214,6 +217,48 @@ $(document).ready(function() {
             <tbody>
             </tbody>
           </table>
+        </div>
+      </div>
+      <div class="collapsable">
+        <p onclick="$($(this).siblings('div')).toggleClass('hide');">Bets</p>
+        <div>
+          <select id="who">
+<option value="Izzy">Izzy</option>
+<option value="Alex">Alex</option>
+<option value="Robbie">Robbie</option>
+<option value="Gunn">Gunn</option>
+<option value="Will">Will</option>
+<option value="Georgie">Georgie</option>
+<option value="Jared">Jared</option>
+<option value="Ros">Ros</option>
+<option value="Szilvia">Szilvia</option>
+<option value="Matthew">Matthew</option>
+<option value="Dearden">Dearden</option>
+<option value="Jack">Jack</option>
+<option value="Rory">Rory</option>
+<option value="Oliver">Oliver</option>
+<option value="Stan">Stan</option>
+<option value="Luan">Luan</option>
+<option value="Ben">Ben</option>
+<option value="Josh">Josh</option>
+<option value="Robert">Robert</option>
+<option value="Terri">Terri</option>
+<option value="Ariana">Ariana</option>
+<option value="Kieran">Kieran</option>
+<option value="Joel">Joel</option>
+<option value="Emily">Emily</option>
+<option value="Ryan">Ryan</option>
+<option value="Delph">Delph</option>
+<option value="Will">Will</option>
+<option value="Ford">Ford</option>
+          </select>
+          <br/>
+          <input id="amount" type="number" min="0"/>
+          <br/>
+          <select id="on">
+          </select>
+          <br/>
+          <button id="addBet">Add</button>
         </div>
       </div>
     </div>
