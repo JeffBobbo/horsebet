@@ -128,23 +128,38 @@ function payouts(winner)
   donePayout = true;
   let payouts = betmanager.winners(winner.name);
 
+  $('table#winnings > tbody').empty();
+
   for (const bet of payouts)
   {
-    console.log(bet.owner + " gets " + betmanager.payout(bet));
+    if (bet.owner === "House")
+      continue;
+    $('table#winnings > tbody:last-child').append('<tr><td>' + bet.owner + '</td><td>' + betmanager.payout(bet) + '</td></tr>');
   }
+}
+
+function resize()
+{
+  let canvas = $('canvas')[0];
+  canvas.width = canvas.clientWidth;
+  canvas.height = HORSE_SIZE * race.horses().length;
+  canvas.style.height = canvas.height + "px";
+  PIXEL_PER_KM = (canvas.width - 100) / race.distance();
+  $('table#winnings').css('top', canvas.height + "px");
 }
 
 $(document).ready(function() {
   // register event listeners
-  $(window).on('resize', function() {
-    let canvas = $('canvas')[0];
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-    PIXEL_PER_KM = (canvas.width - 100) / race.distance()
-  });
+  $(window).on('resize', resize);
 
   $('button#race').click(function() {
     donePayout = false;
+    race.start();
+    $(this).attr('disabled', 'disabled');
+  });
+
+  $('button#reset').click(function() {
+    $('button#race').removeAttr('disabled');
     betmanager = new BetManager();
     race = new Race(horsemanager.choose(rand_i(4, 6)));
     for (const horse of race.horses())
@@ -153,9 +168,9 @@ $(document).ready(function() {
       horse.dist = 0;
       horse.motivation = rand_f(0.9, 1.1);
     }
+    resize();
     houseBets();
     oddsTable();
-    race.start();
   });
 
   for (let i = 0; i < colours.length; ++i)
@@ -171,10 +186,7 @@ $(document).ready(function() {
   houseBets();
   oddsTable();
 
-  let canvas = $('canvas')[0];
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
-  PIXEL_PER_KM = (canvas.width - 100) / race.distance()
+  resize();
 
   // pass off to the idle loop
   requestAnimationFrame(idle);
@@ -187,6 +199,7 @@ $(document).ready(function() {
         <p onclick="$($(this).siblings('div')).toggleClass('hide');">Race</p>
         <div>
           <button id="race">Race</button>
+          <button id="reset">Reset</button>
         </div>
       </div>
       <div class="collapsable">
@@ -205,7 +218,17 @@ $(document).ready(function() {
         </div>
       </div>
     </div>
-    <canvas style="position:fixed; width:calc(100% - 16rem); height:100%; left:16rem;">
+    <canvas style="position:fixed; width:calc(100% - 16rem); left:16rem;">
     </canvas>
+    <table id="winnings" style="position:fixed; left:16rem;">
+      <thead>
+        <tr>
+          <td>Better</td>
+          <td>Winnings</td>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
   </body>
 </html>
