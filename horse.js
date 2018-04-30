@@ -70,9 +70,9 @@ class Horse
     }
 
     ctx.font = "12px Arial";
-    ctx.textAlign = "center";
+    ctx.textAlign = "left";
     ctx.fillStyle = this.won() ? "black" : "white";
-    ctx.fillText(this.name, HORSE_SIZE/2.0, HORSE_SIZE - 6);
+    ctx.fillText(this.name, 6, HORSE_SIZE - 6);
   }
 
   won()
